@@ -4,3 +4,5 @@
 
 /.vs
 /extended_kac/algebra/__pycache__
+/src/algebra/__pycache__
+/TODO.txt
