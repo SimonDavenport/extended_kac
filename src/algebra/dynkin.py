@@ -14,9 +14,9 @@ def _line_symbol(nbr_lines):
     return ___line_symbols[nbr_lines]
 
 
-def _root_symbol(root_length):
+def _root_symbol(root_length, max_root_length):
     """Long roots: filled circles; short roots: empty circles"""
-    return ___root_symbols[root_length > 1]
+    return ___root_symbols[root_length == max_root_length]
 
 
 def _draw_spine(connecting_lines, root_ratios):
@@ -29,10 +29,10 @@ def _draw_spine(connecting_lines, root_ratios):
     spine_root_ratios = root_ratios[:nnz]
     spine_root_lengths = np.cumprod(np.concatenate(([1], spine_root_ratios)))
     spine_root_lengths /= min(spine_root_lengths)
-    diagram_layer = _root_symbol(spine_root_lengths[0])
+    diagram_layer = _root_symbol(spine_root_lengths[0], max(spine_root_lengths))
     for line_count, root_length in zip(spine_line_counts, spine_root_lengths[1:]):
         diagram_layer += _line_symbol(line_count)
-        diagram_layer += _root_symbol(root_length)
+        diagram_layer += _root_symbol(root_length, max(spine_root_lengths))
     return diagram_layer
 
 

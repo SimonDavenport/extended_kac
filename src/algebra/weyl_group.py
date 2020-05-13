@@ -65,7 +65,8 @@ def generate_elements(A, serialized=False):
                                  new_reflections, weyl_reflections, weyl_elements)
         prev_reflections = new_reflections.copy()
         reflection_chain_iteration_count += 1
-    log.debug("Reflection chain contained " + str(reflection_chain_iteration_count) + " iterations")
+    log.debug("Weyl group contains " + str(len(weyl_elements)) + " elements")
+    log.debug("Reflection extension method completed in " + str(reflection_chain_iteration_count) + " iterations")
     if serialized:
         return [[utils.serialize(term) for term in utils.itype(weyl.split(_separator))-1] if len(weyl) > 0 else []
                 for weyl in weyl_elements]

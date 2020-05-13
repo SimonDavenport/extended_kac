@@ -15,7 +15,7 @@ if __name__ == '__main__':
     src.utils.logging.setup_logger(file_name='demo')
     log = logging.getLogger('logger')
 
-    algebra = semisimple_lie_algebra.build('A', 2)
+    algebra = semisimple_lie_algebra.build('F', 4)
 
     roots = algebra.root_system
 
