@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='extended_kac',
       version='0.1',
@@ -7,5 +7,5 @@ setup(name='extended_kac',
       author='Simon C Davenport',
       author_email='simon.davenport2@gmail.com',
       license='GPL',
-      packages=['lie_algebra', 'cft', 'bcft'],
+      packages=find_packages('extended_kac'),
       zip_safe=False)

@@ -1,7 +1,7 @@
 """This file contains some simple tools to draw Dynkin diagrams"""
 
 import numpy as np
-from . import cartan
+from src.algebra import cartan
 
 ___line_symbols = {1: chr(8211), 2: '=', 3: chr(8801)}
 ___root_symbols = {False: chr(9679), True: chr(9675)}
@@ -63,7 +63,7 @@ def draw_diagram(A):
     """Draw Dynkin diagram given a Cartan matrix A"""
     connecting_lines = cartan.nbr_connecting_lines(A)
     root_ratios = cartan.root_ratios(A)
-    diagram = ""
+    diagram = "\n"
     diagram += _draw_spine(connecting_lines, root_ratios)
     diagram += _draw_branches(connecting_lines)
     return diagram

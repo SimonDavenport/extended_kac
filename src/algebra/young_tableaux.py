@@ -1,7 +1,7 @@
 """This file implements utility function to enumerate Young tableaux"""
 
 import numpy as np
-from . import utils
+from src.algebra import utils
 
 
 def highest_weight_to_partition(highest_weight):

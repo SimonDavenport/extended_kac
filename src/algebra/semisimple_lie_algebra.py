@@ -1,16 +1,19 @@
 """This file defines and implements classes describing all of the semi-simple Lie-algebras"""
 
+import logging
 import numpy as np
 import math
-from . import algebra_base, cartan, roots, utils, tensor_product
+from src.algebra import algebra_base, cartan, roots, utils, tensor_product
 
+log = logging.getLogger('logger')
 
 def get_valid_algebras():
     return {'A': A, 'B': B, 'C': C, 'D': D, 'E': E, 'F': F, 'G': G}
 
 
 def build(cartan_classes, ranks):
-    """A factory to construct Lie algebra objects of the given Cartan class and rank"""
+    """A factory to construct Lie algebra objects of the given Cartan class(es) and rank(s)"""
+    log.info('Build semisimple Lie algebra(s): class(es) ' + str(cartan_classes) + ' rank(s) ' + str(ranks))
     if not hasattr(cartan_classes, '__iter__'):
         cartan_classes = [cartan_classes]
     if not hasattr(ranks, '__iter__'):
@@ -22,27 +25,27 @@ def build(cartan_classes, ranks):
         if cartan_class not in valid_algebras.keys():
             raise RuntimeError("Cartan class " + str(cartan_class) + " not valid")
         if cartan_class == 'D' and rank == 2:
-            print("Using that D2 [SO(4)] is isomorphic to A1 [SU(2)] " + tensor_product._tensor_char + " A1 [SU(2)]")
+            log.info("Using that D2 [SO(4)] is isomorphic to A1 [SU(2)] " + tensor_product._tensor_char + " A1 [SU(2)]")
             new_cartan_classes += ['A', 'A']
             new_ranks += [1, 1]
         elif cartan_class == 'B' and rank == 1:
-            print("Using that B1 [SO(3)] is isomorphic to A1 [SU(2)]")
+            log.info("Using that B1 [SO(3)] is isomorphic to A1 [SU(2)]")
             new_cartan_classes += ['A']
             new_ranks += [1]
         elif cartan_class == 'D' and rank == 3:
-            print("Using that D3 [SO(6)] is isomorphic to A3 [SU(4)]")
+            log.info("Using that D3 [SO(6)] is isomorphic to A3 [SU(4)]")
             new_cartan_classes += ['A']
             new_ranks += [3]
         elif cartan_class == 'E' and rank == 3:
-            print("Using that E3 is isomorphic to A2 [SU(3)] " + tensor_product._tensor_char + " A1 [SU(2)]")
+            log.info("Using that E3 is isomorphic to A2 [SU(3)] " + tensor_product._tensor_char + " A1 [SU(2)]")
             new_cartan_classes += ['A', 'A']
             new_ranks += [2, 1]
         elif cartan_class == 'E' and rank == 4:
-            print("Using that E4 is isomorphic to A4 [SU(5)]")
+            log.info("Using that E4 is isomorphic to A4 [SU(5)]")
             new_cartan_classes += ['A']
             new_ranks += [4]
         elif cartan_class == 'E' and rank == 5:
-            print("Using that E5 is isomorphic to D5 [SO(10)]")
+            log.info("Using that E5 is isomorphic to D5 [SO(10)]")
             new_cartan_classes += ['D']
             new_ranks += [5]
         else:
@@ -61,11 +64,12 @@ class SemisimpleLieAlgebra(algebra_base.Algebra):
     _cartan_class = None
 
     def __init__(self, rank):
-        """Initialize algebra data"""
+        log.info('Init semisimple Lie algebra ' + str(self._cartan_class) + str(rank))
         self.__check_rank(rank)
         super(SemisimpleLieAlgebra, self).__init__(rank)
         if self.weyl_order > self._weyl_order_limit:
-            print("Warning: Weyl order exceeds set limit for calculations")
+            log.warn("Weyl order exceeds set limit for calculations")
+        log.info('Dynkin Diagram: ' + self.dynkin_diagram)
 
     def _get_group_dimension(self):
         """Map the algebra rank to the group dimension"""

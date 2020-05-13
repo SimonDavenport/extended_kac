@@ -1,8 +1,11 @@
 """Implementation of tensor product Lie algebras and coefficients for decompositions of tensor products of
 irreducible representations"""
 
+import logging
 import numpy as np
-from . import algebra_base, cartan, representations, weyl_group, utils
+from src.algebra import algebra_base, cartan, representations, weyl_group, utils
+
+log = logging.getLogger('logger')
 
 _tensor_char = chr(10754)
 
@@ -11,6 +14,7 @@ class TensorLieAlgebra(algebra_base.Algebra):
 
     def __init__(self, algebra_list):
         """Initialize the algebra of a tensor product by combining the properties of the list of algebras"""
+        log.info('Initialize tensor product of algebras ' + str(algebra_list))
         self._rank = sum([algebra.rank for algebra in algebra_list])
         self._cartan_matrix = cartan.diagonal_join([algebra.cartan_matrix for algebra in algebra_list])
         self._quadratic_form_matrix = cartan.diagonal_join([algebra.quadratic_form_matrix for algebra in algebra_list])

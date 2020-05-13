@@ -1,8 +1,10 @@
 """Implements functions to generate root and weight lattices"""
 
 import numpy as np
-from . import utils, roots, weyl_group
+import logging
+from src.algebra import utils, roots, weyl_group
 
+log = logging.getLogger('logger')
 
 class FreudenthalRecurser:
     """Implementation of the Freudenthal multiplicity formula"""
@@ -43,6 +45,7 @@ def generate_lattice(highest_weight, A, F):
     """Generate the weight lattice from a given highest weight state in the basis
     of simple roots. Coincides with the root lattice if the highest weight is chosen
     to be the highest root, i.e. the highest weight state in the adjoint representation."""
+    log.info("Generating lattice associated with higest weight state " + str(highest_weight))
     highest_weight = utils.itype(highest_weight)
     root_system = weyl_group.generate_root_system(A, F)
     positive_roots = roots.get_positive_roots(root_system, A)
@@ -63,4 +66,5 @@ def generate_lattice(highest_weight, A, F):
             recurser.update_multiplicity(str_new_weight)
             lattice[str_new_weight] = next_level[str_new_weight]
         this_level = next_level.copy()
+    log.debug("Weight lattice has " + str(len(lattice)) + " elements")
     return [(utils.unserialize(state_str), recurser.multiplicity[state_str]) for state_str in sort_lattice(lattice)]

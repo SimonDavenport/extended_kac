@@ -1,11 +1,13 @@
 """This file contains an implementation of an algroithm to generate the
 elements of the Weyl group associated with a given Cartan matrix"""
 
+import logging
 import numpy as np
-from . import roots, utils, cartan
+from src.algebra import roots, utils, cartan
+
+log = logging.getLogger('logger')
 
 _separator = ','
-
 
 def _weyl_reflection_matrix(root_index, A):
     """Construct a matrix representation for the Weyl reflection acting
@@ -51,8 +53,10 @@ def _extend_reflection_chain(current_reflections, added_reflections,
 def generate_elements(A, serialized=False):
     """Generate the elements and reflection matrtix representations of the
     Weyl group given a Cartan matrix A"""
+    log.debug("Generate Weyl group elements, serialized=" + str(serialized))
     simple_reflections, weyl_reflections, weyl_elements = _init_reflection_chain(A)
     prev_reflections = simple_reflections.copy()
+    reflection_chain_iteration_count = 0 
     while len(prev_reflections) > 0:
         new_reflections = {}
         _extend_reflection_chain(prev_reflections, simple_reflections,
@@ -60,6 +64,8 @@ def generate_elements(A, serialized=False):
         _extend_reflection_chain(simple_reflections, prev_reflections,
                                  new_reflections, weyl_reflections, weyl_elements)
         prev_reflections = new_reflections.copy()
+        reflection_chain_iteration_count += 1
+    log.debug("Reflection chain contained " + str(reflection_chain_iteration_count) + " iterations")
     if serialized:
         return [[utils.serialize(term) for term in utils.itype(weyl.split(_separator))-1] if len(weyl) > 0 else []
                 for weyl in weyl_elements]
@@ -117,6 +123,7 @@ def signature(weyl_element):
 def generate_root_system(A, F, simple_root_basis=False):
     """Generate the root system using the action of the elements of the Weyl group
     on the simple roots."""
+    log.debug("Generate root system, simple_root_basis=" + str(simple_root_basis))
     roots = set()
     serialized_weyl_elements = generate_elements(A, serialized=True)
     cache = {}
@@ -124,6 +131,7 @@ def generate_root_system(A, F, simple_root_basis=False):
         orbit_roots = orbit(simple_root, A, F, serialized_weyl_elements, cache)
         for root in orbit_roots:
             roots.add(utils.serialize(root))
+    log.debug("Root sytem contains " + str(len(roots)) + " roots")
     if simple_root_basis:
         return np.array([roots.to_simple_root_basis(utils.unserialize(root), A) for root in roots])
     else:

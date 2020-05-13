@@ -22,7 +22,7 @@ def serialize(data):
 
 def unserialize(string_data):
     """Convert a serialized string data into its original format"""
-    return np.fromstring(string_data, dtype=itype)
+    return np.frombuffer(string_data, dtype=itype)
 
 
 def round(float_data):

@@ -1,9 +1,11 @@
 """This file contains utility functions to work with properties
 of the Cartan matrix"""
 
+import logging
 import numpy as np
-from . import utils, roots
+from src.algebra import utils, roots
 
+log = logging.getLogger('logger')
 
 def _tridiagonal_matrix(dim, values, diagonals):
     """Build a tridagonal matrix given a list of values
@@ -19,6 +21,7 @@ def _tridiagonal_matrix(dim, values, diagonals):
 def nbr_connecting_lines(A):
     """Get the number of lines connecting all roots.
     The # lines between i and j is A_ij * A_ji"""
+    log.debug("Computing matrix of root connecting lines")
     connecting_lines = np.multiply(A, A.T)
     np.fill_diagonal(connecting_lines, 0)
     return connecting_lines
@@ -26,6 +29,7 @@ def nbr_connecting_lines(A):
 
 def root_ratios(A):
     """The ratio of root i size to root j size is A_ji  / A_ij"""
+    log.debug("Computing matrix of root ratios")
     epsilon = 0.001
     round_fac = 6
     ratios_matrix = np.round(np.divide(A.T, A + epsilon) * round_fac) / round_fac
@@ -42,6 +46,7 @@ def default_matrix(rank):
 
 def get_quadratic_form_matrix(A):
     """Compute and return the quadratic form matrix F given the Cartan matrix A"""
+    log.debug("Computing quadratic form matrix by directly inverting the Cartan matrix")
     if len(A):
         ratios = np.concatenate(([1.0], root_ratios(A)))
         normalized_ratios = ratios / max(ratios)
@@ -53,6 +58,7 @@ def get_quadratic_form_matrix(A):
 
 def extend_matrix(extension_root, A, F):
     """Construct the Cartan matrix extended by the given root"""
+    log.debug("Extending Cartan matrix by root " + str(extension_root))
     extension_row = np.array([[utils.round(roots.inner_product(extension_root, F, roots.coroot(simple_root, F)))
                                for simple_root in A]])
     part_extended_cartan = np.vstack((A, extension_row))
@@ -63,6 +69,7 @@ def extend_matrix(extension_root, A, F):
 
 def diagonal_join(matrix_list):
     """Combine a list of cartan matrices diagonally"""
+    log.debug("Combining Cartan matrices into block diagonal format")
     if len(matrix_list) == 1:
         return matrix_list[0]
     else:

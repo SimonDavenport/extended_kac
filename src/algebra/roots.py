@@ -1,7 +1,7 @@
 """This file contains functions implementing properties of the roots of a Lie algebra"""
 
 import numpy as np
-from . import utils
+from src.algebra import utils
 
 
 def to_simple_root_basis(alpha, A):

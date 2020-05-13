@@ -1,8 +1,7 @@
 """This file contains the base class for the general definition of an algebra"""
 
 import numpy as np
-from . import cartan, utils, weyl_group, lattice, roots, dynkin
-
+from src.algebra import cartan, utils, weyl_group, lattice, roots, dynkin
 
 class Algebra:
 

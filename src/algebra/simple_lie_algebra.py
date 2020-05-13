@@ -1,7 +1,6 @@
 """This file defines and implements classes describing certian of the simple Lie-algebras"""
 
-from . import algebra_base
-
+from src.algebra import algebra_base
 
 class SimpleLieAlgebra(algebra_base.Algebra):
     _group_name = None

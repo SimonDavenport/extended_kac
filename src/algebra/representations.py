@@ -1,7 +1,7 @@
 """Implementation of a class to contain data on a particular irreducible representation"""
 
 import numpy as np
-from . import lattice, roots, utils, young_tableaux
+from src.algebra import lattice, roots, utils, young_tableaux
 
 
 def _is_dominant(weight, positive_roots, F, prec = 10):
