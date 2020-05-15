@@ -75,8 +75,8 @@ class Irrep:
     @property
     def weight_lattice(self):
         """Generate and return the weight lattice for the representation"""
-        self._algebra._check_weyl_order()
-        return lattice.generate_lattice(self._hws, self._algebra.cartan_matrix, self._algebra.quadratic_form_matrix)
+        positive_roots = roots.get_positive_roots(self._algebra.root_system, self._algebra.cartan_matrix)
+        return lattice.generate_lattice(self._hws, positive_roots, self._algebra.cartan_matrix, self._algebra.quadratic_form_matrix)
 
     def character(self, op_weight):
         """Compute and return the character of the representation"""

@@ -41,14 +41,12 @@ def sort_lattice(lattice):
     return sorted(lattice, key=lattice.__getitem__)
 
 
-def generate_lattice(highest_weight, A, F):
+def generate_lattice(highest_weight, positive_roots, A, F):
     """Generate the weight lattice from a given highest weight state in the basis
     of simple roots. Coincides with the root lattice if the highest weight is chosen
     to be the highest root, i.e. the highest weight state in the adjoint representation."""
     log.info("Generating lattice associated with higest weight state " + str(highest_weight))
     highest_weight = utils.itype(highest_weight)
-    root_system = weyl_group.generate_root_system(A, F)
-    positive_roots = roots.get_positive_roots(root_system, A)
     recurser = FreudenthalRecurser(highest_weight, positive_roots, F)
     highest_weight_str = utils.serialize(highest_weight)
     this_level = {highest_weight_str: 0}

@@ -11,7 +11,7 @@ def setup_logger(name=_default_logger_name, file_name='main'):
     fh.setLevel(logging.DEBUG)
     fh.setFormatter(formatter)
     ch = logging.StreamHandler()
-    ch.setLevel(logging.WARNING)
+    ch.setLevel(logging.INFO)
     ch.setFormatter(formatter)
     logger.addHandler(fh)
     logger.addHandler(ch)

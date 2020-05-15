@@ -7,8 +7,8 @@ from src.algebra import utils, roots
 
 log = logging.getLogger('logger')
 
-def _tridiagonal_matrix(dim, values, diagonals):
-    """Build a tridagonal matrix given a list of values
+def _toeplitz_matrix(dim, values, diagonals):
+    """Build a toeplitz matrix given a list of values
     and diagonals; values are pasted along the diagonals"""
     matrix = np.diag(dim * [0])
     for value, diagonal in zip(values, diagonals):
@@ -36,12 +36,24 @@ def root_ratios(A):
     return np.cumprod(np.triu(ratios_matrix, 1).sum(axis=0)[1:])
 
 
-def default_matrix(rank):
+def default_cartan_matrix(rank):
     """Build a default Cartan matrix"""
-    default_cartan_values = [-1, 2, -1]
-    default_cartan_diagonals = [-1, 0, 1]
-    A = _tridiagonal_matrix(rank, default_cartan_values, default_cartan_diagonals)
+    default_values = [-1, 2, -1]
+    default_diagonals = [-1, 0, 1]
+    A = _toeplitz_matrix(rank, default_values, default_diagonals)
     return np.array(A, dtype=utils.itype)
+
+
+def default_modified_cartan_matrix(rank):
+    """Return the modified cartan matrix, which is the cartan matrix written in 
+    a basis for the simple roots that is optimal for computing the actions 
+    of the Weyl group. Ref. Lie Algebras of Finite and Affine Type by 
+    Roger Carter, Ch. 8. The modified Cartan B has rows encoding beta
+    and is given by the inverse of the change of basis from simple roots to betas"""
+    default_values = [-1, 1]
+    default_diagonals = [-1, 0]
+    B = _toeplitz_matrix(rank, default_values, default_diagonals)
+    return np.array(B, dtype=utils.itype)
 
 
 def get_quadratic_form_matrix(A):

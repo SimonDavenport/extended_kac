@@ -48,9 +48,15 @@ def get_positive_roots(root_system, A):
     return root_system[[np.any(utils.round(to_simple_root_basis(root, A)) > 0) for root in root_system]]
 
 
-def find_highest_root(root_system):
-    """The unique root where the sum of coefficients is maximal. Find by searching the full root system"""
-    return root_system[np.argmax(root_system.sum(axis=1))]
+def find_highest_root(root_system, A):
+    """It is the root theta = sum_i a_i alpha_i where if all other roots are sum_i k_i alpha_i,
+    then k_i <= a_i. Ref. Lie Algebras of Finite and Affine Type by Roger Carter, page 251 """
+    positive_roots = get_positive_roots(root_system, A)
+    positive_roots_coefficients = [utils.round(to_simple_root_basis(root, A)) for root in positive_roots]
+    for positive_root in positive_roots_coefficients:
+        if np.all(positive_root >= positive_roots_coefficients):
+            highest_root = from_simple_root_basis(positive_root, A)
+    return highest_root
 
 
 def weyl_vector(rank):

@@ -56,7 +56,7 @@ def generate_elements(A, serialized=False):
     log.debug("Generate Weyl group elements, serialized=" + str(serialized))
     simple_reflections, weyl_reflections, weyl_elements = _init_reflection_chain(A)
     prev_reflections = simple_reflections.copy()
-    reflection_chain_iteration_count = 0 
+    reflection_chain_iteration_count = 0
     while len(prev_reflections) > 0:
         new_reflections = {}
         _extend_reflection_chain(prev_reflections, simple_reflections,
@@ -66,13 +66,13 @@ def generate_elements(A, serialized=False):
         prev_reflections = new_reflections.copy()
         reflection_chain_iteration_count += 1
     log.debug("Weyl group contains " + str(len(weyl_elements)) + " elements")
-    log.debug("Reflection extension method completed in " + str(reflection_chain_iteration_count) + " iterations")
+    log.debug("Reflection composition method completed in " + str(reflection_chain_iteration_count) + " iterations")
+
     if serialized:
         return [[utils.serialize(term) for term in utils.itype(weyl.split(_separator))-1] if len(weyl) > 0 else []
                 for weyl in weyl_elements]
     else:
         return weyl_elements
-
 
 def _weyl_reflection(beta, reflection_label, A, F, cache):
     """Perform a Weyl reflection on the given root beta. Alpha is a simple root.
@@ -90,7 +90,7 @@ def _weyl_reflection(beta, reflection_label, A, F, cache):
 
 def _element_to_reflection(serialized_weyl_element, weight, A, F, cache):
     """Convert a Weyl group element into a series of Weyl reflections acting on
-    the given root. Return the output of applying those reflections."""
+    the given weight. Return the output of applying those reflections."""
     for reflection_label in serialized_weyl_element:
         weight = _weyl_reflection(weight, reflection_label, A, F, cache)
     return weight

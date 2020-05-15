@@ -12,11 +12,31 @@ log = logging.getLogger('logger')
 @ddt.ddt
 class TestSemisimpleLieAlgebras(unittest.TestCase):
 
-    def test_schedule(function):
+    def simplified_test_schedule(function):
         function = ddt.data(('A', 3), ('A', 4), ('A', 5), ('A', 6), ('B', 3), ('B', 4),
-                            ('C', 3), ('C', 4), ('D', 4),  ('F', 4), ('G', 2))(function)#('E', 6),
+                            ('C', 3), ('C', 4), ('D', 4),  ('F', 4), ('G', 2), ('E', 6))(function)
         function = ddt.unpack(function)
         return function
+
+    def test_schedule(function):
+        function = ddt.data(('A', 3), ('A', 4), ('A', 5), ('A', 6), ('B', 3), ('B', 4),
+                            ('C', 3), ('C', 4), ('D', 4),  ('F', 4), ('G', 2), ('E', 6), 
+                            ('E', 7), ('E', 8))(function)
+        function = ddt.unpack(function)
+        return function
+
+    @simplified_test_schedule
+    def test_simplified_root_space_formula(self, cartan_label, rank):
+        algebra = semisimple_lie_algebra.build(cartan_label, rank)
+        roots = set([root.tostring() for root in algebra.root_system])
+        algebra.override_simplified_formula = True
+        roots1 = set([root.tostring() for root in algebra.root_system])
+        assert roots == roots1
+
+    @test_schedule
+    def test_root_space_dimension(self, cartan_label, rank):
+        algebra = semisimple_lie_algebra.build(cartan_label, rank)
+        assert algebra.root_space_order == len(algebra.root_system)
 
     @test_schedule
     def test_contains_highest_root(self, cartan_label, rank):
