@@ -4,7 +4,7 @@ import numpy as np
 import logging
 from src.algebra import utils, roots, weyl_group
 
-log = logging.getLogger('logger')
+log = logging.getLogger()
 
 class FreudenthalRecurser:
     """Implementation of the Freudenthal multiplicity formula"""
@@ -36,7 +36,7 @@ class FreudenthalRecurser:
         self._multiplicity[str_new_weight] = np.int64(np.round(2 * numerator / denominator))
 
 
-def sort_lattice(lattice):
+def _sort_lattice(lattice):
     """Sort the lattice by its level and return its keys in order"""
     return sorted(lattice, key=lattice.__getitem__)
 
@@ -60,9 +60,9 @@ def generate_lattice(highest_weight, positive_roots, A, F):
                     new_weight = start_weight - np.multiply(step, simple_root)
                     str_new_weight = utils.serialize(new_weight)
                     next_level[str_new_weight] =  this_level[str_weight] + step
-        for str_new_weight in sort_lattice(next_level):
+        for str_new_weight in _sort_lattice(next_level):
             recurser.update_multiplicity(str_new_weight)
             lattice[str_new_weight] = next_level[str_new_weight]
         this_level = next_level.copy()
     log.debug("Weight lattice has " + str(len(lattice)) + " elements")
-    return [(utils.unserialize(state_str), recurser.multiplicity[state_str]) for state_str in sort_lattice(lattice)]
+    return [(utils.unserialize(state_str), recurser.multiplicity[state_str]) for state_str in _sort_lattice(lattice)]

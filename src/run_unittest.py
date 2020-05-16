@@ -12,9 +12,9 @@ import src.utils.logging
 if __name__ == '__main__':
 
     src.utils.logging.setup_logger(file_name='test_algebra')
-    log = logging.getLogger('logger')
+    log = logging.getLogger()
 
     loader = unittest.TestLoader()
     suite = loader.discover(os.path.dirname(__file__))
-    runner = unittest.TextTestRunner(verbosity=2)
+    runner = unittest.TextTestRunner(verbosity=2, stream=log.handlers[0].stream)
     runner.run(suite)

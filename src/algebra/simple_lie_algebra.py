@@ -1,8 +1,10 @@
 """This file defines and implements classes describing certian of the simple Lie-algebras"""
 
-from src.algebra import algebra_base
+from src.algebra import kac_moody_algebra
 
-class SimpleLieAlgebra(algebra_base.Algebra):
+class SimpleLieAlgebra(kac_moody_algebra.KacMoodyAlgebra):
+
+    _type = kac_moody_algebra.AlgebraType.FINITE
     _group_name = None
 
     def __init__(self, rank):

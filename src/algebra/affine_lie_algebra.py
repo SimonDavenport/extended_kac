@@ -2,15 +2,13 @@
 non-twisted affine Lie Algebras with both integer and fractional levels"""
 
 import numpy as np
-import algebra
-import lie_algebra
+from src.algebra import kac_moody_algebra, cartan
 import fractions
-import cartan
 
 
-class AffineLieAlgebra(algebra.Base):
+class AffineLieAlgebra(kac_moody_algebra.KacMoodyAlgebra):
 
-    def __init__(self, lie_algebra, level, is_twisted):
+    def __init__(self, semisimple_lie_algebra, level, is_twisted):
         """Perform some type checks and initialize algebra data"""
         if type(level) is int:
             pass
@@ -22,7 +20,7 @@ class AffineLieAlgebra(algebra.Base):
             raise RuntimeError("Invalid is_twisted " + str(is_twisted))
         self.__level = level
         self.__is_twisted = is_twisted
-        self.__lie_algebra = lie_algebra
+        self.__semisimple_lie_algebra = semisimple_lie_algebra
         self._cartan_matrix = self._build_extended_cartan_matrix()
 
     @property

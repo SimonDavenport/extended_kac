@@ -5,7 +5,7 @@ import logging
 import numpy as np
 from src.algebra import roots, utils, cartan
 
-log = logging.getLogger('logger')
+log = logging.getLogger()
 
 _separator = ','
 
@@ -112,13 +112,13 @@ def orbit(weight, A, F, serialized_weyl_elements=None, cache=None):
 
 def length(weyl_element):
     """The length of a Weyl group element is the minimum number of Weyl reflections that
-    need to be composed in order to represent it"""
-    return len(weyl_element)
+    need to be composed in order to represent it."""
+    raise NotImplementedError
 
 
 def signature(weyl_element):
     """The signature of a Weyl group elemenet, denoted by epsilon(w) is (-1)**length(w)"""
-    return (-1) ** length(weyl_element)
+    return (-1) ** len(weyl_element)
 
 
 def generate_root_system(A, F, simple_root_basis=False):

@@ -5,7 +5,7 @@ import logging
 import numpy as np
 from src.algebra import utils, roots
 
-log = logging.getLogger('logger')
+log = logging.getLogger()
 
 def _toeplitz_matrix(dim, values, diagonals):
     """Build a toeplitz matrix given a list of values
@@ -44,11 +44,11 @@ def default_cartan_matrix(rank):
     return np.array(A, dtype=utils.itype)
 
 
-def default_modified_cartan_matrix(rank):
-    """Return the modified cartan matrix, which is the cartan matrix written in 
-    a basis for the simple roots that is optimal for computing the actions 
+def default_orthogonal_cartan_matrix(rank):
+    """Return the orthogonal cartan matrix, which is the cartan matrix written in 
+    a basis for the simple roots that is orthogonal and optimal for computing the actions 
     of the Weyl group. Ref. Lie Algebras of Finite and Affine Type by 
-    Roger Carter, Ch. 8. The modified Cartan B has rows encoding beta
+    Roger Carter, Ch. 8. The orthogonal Cartan B has rows encoding beta
     and is given by the inverse of the change of basis from simple roots to betas"""
     default_values = [-1, 1]
     default_diagonals = [-1, 0]

@@ -16,7 +16,8 @@ from src.algebra import semisimple_lie_algebra, utils, roots
 if __name__ == '__main__':
 
     src.utils.logging.setup_logger(file_name='demo')
-    log = logging.getLogger('logger')
+    log = logging.getLogger()
+
 
     '''
     # E type
@@ -50,9 +51,8 @@ if __name__ == '__main__':
     test = np.all(abs(diff)<1e-14)
     '''
 
-    '''
-    algebra = semisimple_lie_algebra.build('E', 8)
-    algebra1 = semisimple_lie_algebra.build('E', 8)
+    algebra = semisimple_lie_algebra.build('F', 4)
+    algebra1 = semisimple_lie_algebra.build('F', 4)
     
     roots = set([root.tostring() for root in algebra.root_system])
 
@@ -70,4 +70,3 @@ if __name__ == '__main__':
     diff1 = [utils.unserialize(root) for root in roots1.difference(roots)]
 
     lattice = algebra.root_lattice
-    '''

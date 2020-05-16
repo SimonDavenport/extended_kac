@@ -1,0 +1,148 @@
+test_root_space_order_01___A___3_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) A rank(s) 3
+Init semisimple Lie algebra A3
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○–○–○
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_02___A___4_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) A rank(s) 4
+Init semisimple Lie algebra A4
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○–○–○–○
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_03___A___5_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) A rank(s) 5
+Init semisimple Lie algebra A5
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○–○–○–○–○
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_04___A___6_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) A rank(s) 6
+Init semisimple Lie algebra A6
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○–○–○–○–○–○
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_05___B___3_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) B rank(s) 3
+Init semisimple Lie algebra B3
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○–○=●
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_06___B___4_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) B rank(s) 4
+Init semisimple Lie algebra B4
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○–○–○=●
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_07___C___3_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) C rank(s) 3
+Init semisimple Lie algebra C3
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+●–●=○
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_08___C___4_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) C rank(s) 4
+Init semisimple Lie algebra C4
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+●–●–●=○
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_09___D___4_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) D rank(s) 4
+Init semisimple Lie algebra D4
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○–○–○
+  |
+  ○
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_10___F___4_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) F rank(s) 4
+Init semisimple Lie algebra F4
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○–○=●–●
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_11___G___2_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) G rank(s) 2
+Init semisimple Lie algebra G2
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○≡●
+Compute root system
+No simplified root system formula is available (or applying override); enumerating roots directly
+Computing quadratic form matrix by directly inverting the Cartan matrix
+Computing matrix of root ratios
+Generate root system, simple_root_basis=False
+Generate Weyl group elements, serialized=True
+Weyl group contains 12 elements
+Reflection composition method completed in 6 iterations
+Root sytem contains 12 roots
+ok
+test_root_space_order_12___E___6_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) E rank(s) 6
+Init semisimple Lie algebra E6
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○–○–○–○–○
+    |
+    ○
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_13___E___7_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) E rank(s) 7
+Init semisimple Lie algebra E7
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○–○–○–○–○–○
+      |
+      ○
+Compute root system
+Simplified root system formula is available
+ok
+test_root_space_order_14___E___8_ (algebra.test_algebra.TestSemisimpleLieAlgebras) ... Build semisimple Lie algebra(s): class(es) E rank(s) 8
+Init semisimple Lie algebra E8
+Weyl order exceeds set limit for direct enumeration
+Computing matrix of root connecting lines
+Computing matrix of root ratios
+Dynkin Diagram: 
+○–○–○–○–○–○–○
+        |
+        ○
+Compute root system
+Simplified root system formula is available
+ok
+test_schedule (algebra.test_algebra.TestSemisimpleLieAlgebras) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.056s
+
+OK

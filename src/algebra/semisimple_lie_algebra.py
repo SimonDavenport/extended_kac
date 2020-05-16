@@ -4,9 +4,9 @@ import logging
 import numpy as np
 import math
 from sympy.utilities.iterables import multiset_permutations
-from src.algebra import algebra_base, cartan, roots, utils, tensor_product
+from src.algebra import kac_moody_algebra, cartan, roots, utils, tensor_product
 
-log = logging.getLogger('logger')
+log = logging.getLogger()
 
 def get_valid_algebras():
     return {'A': A, 'B': B, 'C': C, 'D': D, 'E': E, 'F': F, 'G': G}
@@ -59,10 +59,11 @@ def build(cartan_classes, ranks):
         return tensor_product.TensorLieAlgebra(algebra_list)
 
 
-class SemisimpleLieAlgebra(algebra_base.Algebra):
+class SemisimpleLieAlgebra(kac_moody_algebra.KacMoodyAlgebra):
 
-    _rank_restriction = None
+    _matrix_class = None
     _cartan_class = None
+    _rank_restriction = None
 
     def __init__(self, rank):
         log.debug('Init semisimple Lie algebra ' + str(self._cartan_class) + str(rank))
@@ -71,10 +72,6 @@ class SemisimpleLieAlgebra(algebra_base.Algebra):
         if self.weyl_order > self._weyl_order_limit:
             log.warn("Weyl order exceeds set limit for direct enumeration")
         log.info('Dynkin Diagram: ' + self.dynkin_diagram)
-
-    def _get_group_dimension(self):
-        """Map the algebra rank to the group dimension"""
-        return self.rank
 
     def __check_rank(self, rank):
         """Perform type and bound checks on the rank"""
@@ -88,21 +85,46 @@ class SemisimpleLieAlgebra(algebra_base.Algebra):
             if rank < self._rank_restriction:
                 raise rank_error
 
-    def _compute_dual_coxeter_number(self):
-        """Compute and return the dual Coxeter number"""
+    @property
+    def type(self):
+        return kac_moody_algebra.AlgebraType.FINITE
+
+    @property
+    def dual_coxeter_number_from_comarks(self):
+        """General definition of dual Coxeter number for semisimple Lie algebras"""
         return np.sum(roots.comarks(self.highest_root, self.cartan_matrix, self.quadratic_form_matrix)) + 1
+
+    @property
+    def algebra_dimension(self):
+        """General definition of algebra dimension for semisimple Lie algebras"""
+        return self.rank + self.root_space_order
+
+    @property
+    def group_name(self):
+        """Group name is of the form matrix class (dimension)"""
+        return self._matrix_class + "(" + str(self.group_dimension) + ")"
+
+    @property
+    def weyl_vector(self):
+        """General definition of Weyl vector for semisimple Lie algebras"""
+        return roots.weyl_vector(self.rank)
 
 
 class A(SemisimpleLieAlgebra):
 
-    _group_name = "SU"
+    _matrix_class = "SU"
     _cartan_class = 'A'
     _rank_restriction = 1
 
     def __init__(self, rank):
         super(A, self).__init__(rank)
 
-    def _get_group_dimension(self):
+    @property
+    def name(self):
+        return self.group_name
+
+    @property
+    def group_dimension(self):
         """Map the algebra rank to the group dimension"""
         return self.rank + 1
 
@@ -110,14 +132,14 @@ class A(SemisimpleLieAlgebra):
         """Build the Cartan matrix"""
         return cartan.default_cartan_matrix(rank)
 
-    def _build_modified_cartan_matrix(self, rank):
-        """Build modified Cartan matrix"""
-        B = cartan.default_modified_cartan_matrix(rank)
+    def _build_orthogonal_cartan_matrix(self, rank):
+        """Build orthogonal Cartan matrix"""
+        B = cartan.default_orthogonal_cartan_matrix(rank)
         return np.vstack((B, np.array((rank-1) * [0] + [-1], dtype=utils.itype)))
 
     def _build_simplified_root_space_formula(self, rank):
         """Build simplified root space formula as a function of 
-        the modified Cartan matrix B"""
+        the orthogonal Cartan matrix B"""
         return lambda B: np.array([B[i] - B[j] for i in range(0, rank+1) for j in range(0, rank+1) if i!=j])
 
     @property
@@ -146,12 +168,16 @@ class A(SemisimpleLieAlgebra):
 
 class B(SemisimpleLieAlgebra):
 
-    _group_name = "SO"
+    _matrix_class = "SO"
     _cartan_class = 'B'
     _rank_restriction = 2
 
     def __init__(self, rank):
         super(B, self).__init__(rank)
+
+    @property
+    def name(self):
+        return self.group_name
 
     def _get_group_dimension(self):
         """Map the algebra rank to the group dimension"""
@@ -163,15 +189,15 @@ class B(SemisimpleLieAlgebra):
         A[-2, -1] = -2
         return A
 
-    def _build_modified_cartan_matrix(self, rank):
-        """Build modified Cartan matrix"""
-        B = cartan.default_modified_cartan_matrix(rank)
+    def _build_orthogonal_cartan_matrix(self, rank):
+        """Build orthogonal Cartan matrix"""
+        B = cartan.default_orthogonal_cartan_matrix(rank)
         B[-1, -1] = 2
         return B
 
     def _build_simplified_root_space_formula(self, rank):
         """Build simplified root space formula as a function of 
-        the modified Cartan matrix B"""
+        the orthogonal Cartan matrix B"""
         return lambda B: np.array([sign1 * B[i] + sign2 * B[j]
                                    for sign1 in [-1, 1] for sign2 in [-1, 1]
                                    for i in range(0, rank) for j in range(0, rank) if i>j] + 
@@ -200,12 +226,16 @@ class B(SemisimpleLieAlgebra):
 
 class C(SemisimpleLieAlgebra):
 
-    _group_name = "SP"
+    _matrix_class = "SP"
     _cartan_class = 'C'
     _rank_restriction = 2
 
     def __init__(self, rank):
         super(C, self).__init__(rank)
+
+    @property
+    def name(self):
+        return self.group_name
 
     def _get_group_dimension(self):
         """Map the algebra rank to the group dimension"""
@@ -217,13 +247,13 @@ class C(SemisimpleLieAlgebra):
         A[-1, -2] = -2
         return A
 
-    def _build_modified_cartan_matrix(self, rank):
-        """Build modified Cartan matrix"""
-        return cartan.default_modified_cartan_matrix(rank)
+    def _build_orthogonal_cartan_matrix(self, rank):
+        """Build orthogonal Cartan matrix"""
+        return cartan.default_orthogonal_cartan_matrix(rank)
 
     def _build_simplified_root_space_formula(self, rank):
         """Build simplified root space formula as a function of 
-        the modified Cartan matrix B"""
+        the orthogonal Cartan matrix B"""
         return lambda B: np.array([sign1 * B[i] + sign2 * B[j] 
                                    for sign1 in [-1, 1] for sign2 in [-1, 1]
                                    for i in range(0, rank) for j in range(0, rank) if i>j] + 
@@ -252,12 +282,16 @@ class C(SemisimpleLieAlgebra):
 
 class D(SemisimpleLieAlgebra):
 
-    _group_name = "SO"
+    _matrix_class = "SO"
     _cartan_class = 'D'
     _rank_restriction = 4
 
     def __init__(self, rank):
         super(D, self).__init__(rank)
+
+    @property
+    def name(self):
+        return self.group_name
 
     def _get_group_dimension(self):
         """"Map the algebra rank to the group dimension"""
@@ -272,15 +306,15 @@ class D(SemisimpleLieAlgebra):
         A[-3, -1] = -1
         return A
 
-    def _build_modified_cartan_matrix(self, rank):
-        """Build modified Cartan matrix"""
-        B = cartan.default_modified_cartan_matrix(rank)
+    def _build_orthogonal_cartan_matrix(self, rank):
+        """Build orthogonal Cartan matrix"""
+        B = cartan.default_orthogonal_cartan_matrix(rank)
         B[-2 ,-1] = 1
         return B
 
     def _build_simplified_root_space_formula(self, rank):
         """Build simplified root space formula as a function of 
-        the modified Cartan matrix B"""
+        the orthogonal Cartan matrix B"""
         return lambda B: np.array([sign1 * B[i] + sign2 * B[j]
                                    for sign1 in [-1, 1] for sign2 in [-1, 1]
                                    for i in range(0, rank) for j in range(0, rank) if i>j])
@@ -308,7 +342,7 @@ class D(SemisimpleLieAlgebra):
 
 class E(SemisimpleLieAlgebra):
 
-    _group_name = 'E'
+    _matrix_class = 'E'
     _cartan_class = 'E'
     _rank_restriction = [6, 7, 8]
     __weyl_orders = {6: 72 * math.factorial(6), 7: 72 * math.factorial(8),
@@ -322,6 +356,10 @@ class E(SemisimpleLieAlgebra):
     def __init__(self, rank):
         super(E, self).__init__(rank)
 
+    @property
+    def name(self):
+        return self._matrix_class + str(self.rank)
+
     def _build_cartan_matrix(self, rank):
         """Build the Cartan matrix - note following uncommon (but simpler) root convention
         following Ref. Lie Algebras of Finite and Affine Type by Roger Carter, Ch. 6."""
@@ -332,21 +370,18 @@ class E(SemisimpleLieAlgebra):
         A[-2, -4] = -1
         return A
 
-    def _build_modified_cartan_matrix(self, rank):
-        """Build modified Cartan matrix. These rules come from encoding the beta
-           basis and is given by the inverse of the change of basis from simple roots to betas. 
-           Ref. Lie Algebras of Finite and Affine Type by Roger Carter, Ch. 8. """
-        B = np.vstack((np.zeros((8-rank, rank)), cartan.default_modified_cartan_matrix(rank).astype(np.float64)))
+    def _build_orthogonal_cartan_matrix(self, rank):
+        """Build orthogonal Cartan matrix"""
+        B = np.vstack((np.zeros((8-rank, rank)), cartan.default_orthogonal_cartan_matrix(rank).astype(np.float64)))
         B[: , -1] = -0.5
         B[-1 , -2] = 0
         B[-3 , -2] = 1
         return B
 
     def _build_sign_restrictions(self, rank):
-        """Impose the construciton rule prod_{1, .., 8} epsilon_i = 1 with
+        """Impose the construction rule prod_{1, .., 8} epsilon_i = 1 with
         E6: epsilon_1 = epsilon_2 = epsilon_8
-        E7: epsilon_1 = epsilon_8
-        Ref. Lie Algebras of Finite and Affine Type by Roger Carter, Ch. 8.  """
+        E7: epsilon_1 = epsilon_8 """
         base_set = np.array([[1, 1, 1, 1, 1, 1, 1, 1], [-1, -1, -1, -1, -1, -1, -1, -1]] + 
                             [perm for perm in multiset_permutations([1, 1, 1, 1, 1, 1, -1, -1])] +
                             [perm for perm in multiset_permutations([1, 1, 1, 1, -1, -1, -1, -1])] +
@@ -360,8 +395,7 @@ class E(SemisimpleLieAlgebra):
 
     def _build_simplified_root_space_formula(self, rank):
         """Build simplified root space formula as a function of 
-        the modified Cartan matrix B. 
-        Ref. Lie Algebras of Finite and Affine Type by Roger Carter, Ch. 8."""
+        the orthogonal Cartan matrix B"""
         min_index = 8 - rank
         max_index = 8 - int(rank!=8)
         include_18_term = rank==7
@@ -396,7 +430,7 @@ class E(SemisimpleLieAlgebra):
 
 class F(SemisimpleLieAlgebra):
 
-    _group_name = 'F'
+    _matrix_class = 'F'
     _cartan_class = 'F'
     _rank_restriction = [4]
     __weyl_orders = {4: 1152}
@@ -406,17 +440,19 @@ class F(SemisimpleLieAlgebra):
     def __init__(self, rank):
         super(F, self).__init__(rank)
 
+    @property
+    def name(self):
+        return self._matrix_class + str(self.rank)
+
     def _build_cartan_matrix(self, rank):
         """Build the Cartan matrix"""
         A = cartan.default_cartan_matrix(rank)
         A[1, 2] = -2
         return A
 
-    def _build_modified_cartan_matrix(self, rank):
-        """Build modified Cartan matrix. These rules come from encoding the beta
-           basis and is given by the inverse of the change of basis from simple roots to betas. 
-           Ref. Lie Algebras of Finite and Affine Type by Roger Carter, Ch. 8. """
-        B = cartan.default_modified_cartan_matrix(rank)
+    def _build_orthogonal_cartan_matrix(self, rank):
+        """Build orthogonal Cartan matrix """
+        B = cartan.default_orthogonal_cartan_matrix(rank)
         B[: , -1] = -1
         B[-1 , -1] = 1
         B[-2 , -2] = 2
@@ -424,10 +460,7 @@ class F(SemisimpleLieAlgebra):
         return B
 
     def _build_sign_restrictions(self, rank):
-        """Impose the construciton rule prod_{1, .., 8} epsilon_i = 1 with
-        E6: epsilon_1 = epsilon_2 = epsilon_8
-        E7: epsilon_1 = epsilon_8
-        Ref. Lie Algebras of Finite and Affine Type by Roger Carter, Ch. 8.  """
+        """Signs can be +/- for the sum of the 4 roots"""
         base_set = np.array([[1, 1, 1, 1], [-1, -1, -1, -1]] + 
                             [perm for perm in multiset_permutations([1, 1, 1, -1])] +
                             [perm for perm in multiset_permutations([1, 1, -1, -1])] +
@@ -436,8 +469,7 @@ class F(SemisimpleLieAlgebra):
 
     def _build_simplified_root_space_formula(self, rank):
         """Build simplified root space formula as a function of 
-        the modified Cartan matrix B. 
-        Ref. Lie Algebras of Finite and Affine Type by Roger Carter, Ch. 8."""
+        the orthogonal Cartan matrix B"""
         return lambda B: np.array([sign * row for sign in [-1, 1] for row in B] + 
                                   [sign1 * B[i] + sign2 * B[j]
                                    for sign1 in [-1, 1] for sign2 in [-1, 1]
@@ -468,7 +500,7 @@ class F(SemisimpleLieAlgebra):
 
 class G(SemisimpleLieAlgebra):
 
-    _group_name = 'G'
+    _matrix_class = 'G'
     _cartan_class = 'G'
     _rank_restriction = [2]
     __weyl_orders = {2: 12}
@@ -477,6 +509,10 @@ class G(SemisimpleLieAlgebra):
 
     def __init__(self, rank):
         super(G, self).__init__(rank)
+
+    @property
+    def name(self):
+        return self._matrix_class + str(self.rank)
 
     def _build_cartan_matrix(self, rank):
         """Build the Cartan matrix"""

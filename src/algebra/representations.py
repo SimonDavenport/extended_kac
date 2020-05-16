@@ -28,6 +28,10 @@ class Irrep:
         """Return the associated algebra"""
         return self._algebra
 
+    @algebra.setter
+    def setter(self, value):
+        raise NotImplementedError("Cannot overwrite algebra")
+
     @property
     def highest_weight_state(self):
         """Return the highest weight state"""

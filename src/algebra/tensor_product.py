@@ -3,63 +3,73 @@ irreducible representations"""
 
 import logging
 import numpy as np
-from src.algebra import algebra_base, cartan, representations, weyl_group, utils
+from src.algebra import kac_moody_algebra, cartan, representations, weyl_group, utils
 
-log = logging.getLogger('logger')
+log = logging.getLogger()
 
 _tensor_char = chr(10754)
 
 
-class TensorLieAlgebra(algebra_base.Algebra):
+class TensorLieAlgebra(kac_moody_algebra.KacMoodyAlgebra):
 
     def __init__(self, algebra_list):
         """Initialize the algebra of a tensor product by combining the properties of the list of algebras"""
-        log.info('Initialize tensor product of algebras ' + str(algebra_list))
-        self._rank = sum([algebra.rank for algebra in algebra_list])
-        self._cartan_matrix = cartan.diagonal_join([algebra.cartan_matrix for algebra in algebra_list])
-        self._quadratic_form_matrix = cartan.diagonal_join([algebra.quadratic_form_matrix for algebra in algebra_list])
-        self._name_list = [algebra.name for algebra in algebra_list]
-        self._weyl_order = np.prod([algebra.weyl_order for algebra in algebra_list])
-        self._highest_root = np.concatenate([algebra.highest_root for algebra in algebra_list])
-        self._algebra_dimension = np.prod([algebra.algebra_dimension for algebra in algebra_list])
-        self._dual_coxeter_number = sum([algebra.dual_coxeter_number - 1 for algebra in algebra_list]) + 1
-        self._dynkin_diagram = ""
-        for algebra in algebra_list[:-1]:
-            self._dynkin_diagram += algebra.dynkin_diagram + "\n"
-        self._dynkin_diagram += algebra_list[-1].dynkin_diagram
+        log.info('Initialize tensor product of algebras ' + _tensor_char.join([algebra.name for algebra in algebra_list]))
+        super(TensorLieAlgebra, self).__init__(sum([algebra.rank for algebra in algebra_list]))
+        self._algebra_list = algebra_list
+
+    def _build_cartan_matrix(self, rank):
+        """Cartan matrix is a block diagoal of the Cartans of the underlying algebras"""
+        return cartan.diagonal_join([algebra.cartan_matrix for algebra in self._algebra_list])
+
+    def _build_quadratic_form_matrix(self):
+        """Quadratic form matrix is a block diagoal of the quadratic forms of the underlying algebras"""
+        return cartan.diagonal_join([algebra.quadratic_form_matrix for algebra in self._algebra_list])
+
+    @property
+    def type(self):
+        """Select the most general type of the composing algebras"""
+        return kac_moody_algebra.AlgebraType(np.max([algebra.type for algebra in self._algebra_list]))
 
     @property
     def name(self):
-        """Return the algebra name """
-        full_name = ''
-        for name in self._name_list[:-1]:
-            full_name += name + " " + _tensor_char + " "
-        return full_name + self._name_list[-1]
+        """A combination of the names of the underlying algebras"""
+        return _tensor_char.join([algebra.name for algebra in self._algebra_list])
 
     @property
-    def weyl_order(self):
-        """Return the order of the associated Weyl group"""
-        return self._weyl_order
-
-    @property
-    def highest_root(self):
-        """The unique root where the sum of coefficients is maximal"""
-        return self._highest_root
+    def root_space_order(self):
+        """Given by the product of the root space orders of the composigng algebras"""
+        return np.prod([algebra.root_space_order for algebra in self._algebra_list])
 
     @property
     def algebra_dimension(self):
-        """Get the dimension of the algebra"""
-        return self._compute_algebra_dimension()
+        """Given by the product of the dimensions of the underlying algebras"""
+        return np.prod([algebra.algebra_dimension for algebra in self._algebra_list])
 
     @property
     def dual_coxeter_number(self):
-        """Return the dual Coxeter number"""
-        return self._dual_coxeter_number
+        """Compute the combined dual coexeter number"""
+        return sum([algebra.dual_coxeter_number - 1 for algebra in self._algebra_list]) + 1
+
+    @property
+    def weyl_order(self):
+        """Given by the product of the Weyl group orders of the composing algebras"""
+        return np.prod([algebra.weyl_order for algebra in self._algebra_list])
+
+    @property
+    def highest_root(self):
+        """Given by concatenating the highest roots of the composing algebras"""
+        return np.concatenate([algebra.highest_root for algebra in self._algebra_list])
+
+    @property
+    def weyl_vector(self):
+        """Given by concatenating the highest roots of the composing algebras"""
+        return np.concatenate([algebra.weyl_vector for algebra in self._algebra_list])
 
     @property
     def dynkin_diagram(self):
         """Plot the Dynkin diagram"""
-        return self._dynkin_diagram
+        return ("\n" + _tensor_char + "\n").join([algebra.dynkin_diagram for algebra in self._algebra_list])
 
 
 def compute_irrep_decomposition(irrep1, irrep2, as_irreps=False):

@@ -42,10 +42,10 @@ def coroot(alpha, F):
     return 2 * alpha / norm(alpha, F)
 
 
-def get_positive_roots(root_system, A):
+def get_positive_roots(roots, A):
     """Extract the positive roots from the full root system. Positive roots are those roots
     made from linear combinations of simple roots with positive coefficients. """
-    return root_system[[np.any(utils.round(to_simple_root_basis(root, A)) > 0) for root in root_system]]
+    return roots[[np.any(utils.round(to_simple_root_basis(root, A)) > 0) for root in roots]]
 
 
 def find_highest_root(root_system, A):

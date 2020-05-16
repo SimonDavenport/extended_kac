@@ -3,14 +3,19 @@
 import unittest
 import ddt
 import numpy as np
+import sys
 import logging
+from src.algebra import semisimple_lie_algebra, representations
 
-from src.algebra import semisimple_lie_algebra, representations, roots
-
-log = logging.getLogger('logger')
+log = logging.getLogger()
 
 @ddt.ddt
 class TestSemisimpleLieAlgebras(unittest.TestCase):
+
+    def setUp(self):
+        """Hack to record the output of TestCase which does not flush the first line in the output"""
+        print("", file=log.handlers[0].stream)
+        return super().setUp()
 
     def simplified_test_schedule(function):
         function = ddt.data(('A', 3), ('A', 4), ('A', 5), ('A', 6), ('B', 3), ('B', 4),
@@ -34,7 +39,7 @@ class TestSemisimpleLieAlgebras(unittest.TestCase):
         assert roots == roots1
 
     @test_schedule
-    def test_root_space_dimension(self, cartan_label, rank):
+    def test_root_space_order(self, cartan_label, rank):       
         algebra = semisimple_lie_algebra.build(cartan_label, rank)
         assert algebra.root_space_order == len(algebra.root_system)
 
@@ -46,44 +51,40 @@ class TestSemisimpleLieAlgebras(unittest.TestCase):
     @test_schedule
     def test_positive_negative_root_space_subdivision(self, cartan_label, rank):
         algebra = semisimple_lie_algebra.build(cartan_label, rank)
-        root_system = algebra.root_system
-        positive_roots = roots.get_positive_roots(root_system, algebra.cartan_matrix)
+        positive_roots = algebra.positive_roots
         negative_roots = -positive_roots
         proposed_root_system = np.concatenate((positive_roots, negative_roots))
-        assert np.all(np.sort(root_system, axis=0) == np.sort(proposed_root_system, axis=0))
+        assert np.all(np.sort(algebra.root_system, axis=0) == np.sort(proposed_root_system, axis=0))
 
     @test_schedule
     def tets_positive_negative_root_lattice_subdivision(self, cartan_label, rank):
         algebra = semisimple_lie_algebra.build(cartan_label, rank)
-        root_lattice = np.stack([root for root, mul in algebra.root_lattice])
-        positive_roots = roots.get_positive_roots(root_lattice, algebra.cartan_matrix)
+        positive_roots = np.stack([root for root, mul in algebra.positive_root_lattice])
         negative_roots = -positive_roots
         zero_root = np.zeros(len(positive_roots[0]), dtype=utils.itype)
         proposed_root_lattice = np.concatenate((positive_roots, negative_roots, [zero_root]))
-        assert np.all(np.sort(root_lattice, axis=0) == np.sort(proposed_root_lattice, axis=0))
+        assert np.all(np.sort(algebra.root_lattice, axis=0) == np.sort(proposed_root_lattice, axis=0))
 
     @test_schedule
     def test_root_lattice_multiplicity(self, cartan_label, rank):
         algebra = semisimple_lie_algebra.build(cartan_label, rank)
-        root_lattice_mul = np.stack([mul for root, mul in algebra.root_lattice])
+        root_lattice_mul = np.stack([mul for _, mul in algebra.root_lattice])
         assert len(root_lattice_mul[root_lattice_mul>1]) == 1
 
     @test_schedule
     def test_dual_coxeter_number_computation(self, cartan_label, rank):
         algebra = semisimple_lie_algebra.build(cartan_label, rank)
-        assert algebra.dual_coxeter_number == algebra._compute_dual_coxeter_number()
+        assert algebra.dual_coxeter_number == algebra.dual_coxeter_number_from_comarks
 
     @test_schedule
     def test_algebra_dimension_computation(self, cartan_label, rank):
         algebra = semisimple_lie_algebra.build(cartan_label, rank)
-        assert algebra.algebra_dimension == algebra._compute_algebra_dimension()
+        assert algebra.algebra_dimension == algebra.algebra_dimension_from_root_lattice
     
     @test_schedule
     def test_freudenthal_de_vries_strange_formula(self, cartan_label, rank):
         algebra = semisimple_lie_algebra.build(cartan_label, rank)
-        lhs = roots.norm(roots.weyl_vector(rank), algebra.quadratic_form_matrix)
-        rhs = algebra.dual_coxeter_number * algebra.algebra_dimension / 12.0
-        assert np.abs(lhs - rhs) < 1e-10
+        assert np.abs(algebra.weyl_vector_norm - algebra.dual_coxeter_number * algebra.algebra_dimension / 12.0) < 1e-10
 
     @ddt.data ((4, (0, 1, 2, 3)), (5, (0, 1, 2, 1, 0)), (6, (0, 0, 2, 2, 0, 0)))
     @ddt.unpack
